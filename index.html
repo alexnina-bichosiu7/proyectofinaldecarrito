@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nina y Alex - Frutas Frescas</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --verde-primario: #4CAF50;
+            --verde-claro: #8BC34A;
+            --amarillo: #FFD54F;
+            --naranja: #FF9800;
+            --naranja-suave: #FFB74D;
+            --texto-oscuro: #2E7D32;
+            --texto-claro: #757575;
+            --fondo: #FFFEF7;
+            --blanco: #FFFFFF;
+            --sombra: 0 4px 12px rgba(0,0,0,0.08);
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--fondo);
+            color: var(--texto-oscuro);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        h1, h2, h3, .logo {
+            font-family: 'Nunito', sans-serif;
+            font-weight: 800;
+        }
+
+        /* HEADER */
+        header {
+            background: linear-gradient(to right, var(--verde-primario), var(--verde-claro));
+            padding: 1rem 0;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--sombra);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        .logo {
+            font-size: 2rem;
+            color: var(--blanco);
+            text-decoration: none;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo::before {
+            content: "🍃";
+            font-size: 2.2rem;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2rem;
+            align-items: center;
+        }
+
+        nav a {
+            color: var(--blanco);
+            text-decoration: none;
+            font-weight: 500;
+            transition: opacity 0.3s;
+            font-size: 1.1rem;
+        }
+
+        nav a:hover {
+            opacity: 0.9;
+            text-decoration: underline;
+        }
+
+        .btn-comprar {
+            background: var(--naranja);
+            color: var(--blanco);
+            padding: 10px 24px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 2px 8px rgba(255,152,0,0.3);
+        }
+
+        .btn-comprar:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(255,152,0,0.4);
+        }
+
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 2rem;
+            color: var(--blanco);
+            cursor: pointer;
+        }
+
+        /* CARRITO ICONO */
+        .cart-icon {
+            position: relative;
+            cursor: pointer;
+            font-size: 1.8rem;
+            color: var(--blanco);
+            margin-left: 1rem;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -8px;
+            right: -8px;
+            background: var(--naranja);
+            color: var(--blanco);
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: 700;
+        }
+
+        /* PANEL CARRITO */
+        .cart-sidebar {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100vh;
+            background: var(--blanco);
+            box-shadow: -4px 0 20px rgba(0,0,0,0.15);
+            transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            border-radius: 20px 0 0 20px;
+        }
+
+        .cart-sidebar.active {
+            right: 0;
+        }
+
+        .cart-header {
+            background: var(--verde-primario);
+            color: var(--blanco);
+            padding: 1.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-radius: 20px 0 0 0;
+        }
+
+        .cart-title {
+            font-size: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .close-cart {
+            background: none;
+            border: none;
+            color: var(--blanco);
+            font-size: 2rem;
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+
+        .close-cart:hover {
+            transform: rotate(90deg);
+        }
+
+        .cart-items {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+        }
+
+        .cart-item {
+            display: flex;
+            gap: 1rem;
+            padding: 1rem;
+            border-bottom: 1px solid #E0E0E0;
+            align-items: center;
+            transition: background 0.3s;
+        }
+
+        .cart-item:hover {
+            background: #F5F5F5;
+            border-radius: 12px;
+        }
+
+        .cart-item-img {
+            width: 70px;
+            height: 70px;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+
+        .cart-item-details {
+            flex: 1;
+        }
+
+        .cart-item-name {
+            font-weight: 600;
+            color: var(--texto-oscuro);
+            margin-bottom: 0.3rem;
+        }
+
+        .cart-item-price {
+            color: var(--naranja);
+            font-weight: 700;
+        }
+
+        .cart-item-controls {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .cart-item-quantity {
+            background: var(--fondo);
+            padding: 0.3rem 0.8rem;
+            border-radius: 8px;
+            font-weight: 600;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        .quantity-btn {
+            background: var(--verde-claro);
+            color: var(--blanco);
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: background 0.3s;
+        }
+
+        .quantity-btn:hover {
+            background: var(--verde-primario);
+        }
+
+        .remove-item {
+            background: #FF5252;
+            color: var(--blanco);
+            border: none;
+            padding: 0.4rem 0.8rem;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: background 0.3s;
+        }
+
+        .remove-item:hover {
+            background: #D32F2F;
+        }
+
+        .empty-cart {
+            text-align: center;
+            padding: 3rem;
+            color: var(--texto-claro);
+        }
+
+        .empty-cart::before {
+            content: "🛒";
+            font-size: 4rem;
+            display: block;
+            margin-bottom: 1rem;
+            opacity: 0.3;
+        }
+
+        .cart-footer {
+            border-top: 2px solid #E0E0E0;
+            padding: 1.5rem;
+            background: var(--fondo);
+            border-radius: 0 0 0 20px;
+        }
+
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--texto-oscuro);
+            margin-bottom: 1rem;
+        }
+
+        .btn-checkout {
+            width: 100%;
+            background: linear-gradient(to right, var(--naranja), var(--naranja-suave));
+            color: var(--blanco);
+            border: none;
+            padding: 1rem;
+            border-radius: 15px;
+            font-size: 1.1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .btn-checkout:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(255,152,0,0.4);
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1500;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s, visibility 0.3s;
+        }
+
+        .overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        /* NOTIFICACIONES TOAST */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--verde-primario);
+            color: var(--blanco);
+            padding: 1rem 1.5rem;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s;
+            z-index: 3000;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast::before {
+            content: "✅";
+            font-size: 1.5rem;
+        }
+
+        /* HERO */
+        .hero {
+            background: linear-gradient(rgba(0,0,0,0.2), rgba(0,0,0,0.2)), 
+                        url('https://images.unsplash.com/photo-1490818387583-1baba5e638af?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80') center/cover;
+            min-height: 500px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: var(--blanco);
+            border-radius: 0 0 30px 30px;
+            margin-bottom: 4rem;
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .hero-content p {
+            font-size: 1.5rem;
+            margin-bottom: 2rem;
+            font-weight: 300;
+        }
+
+        .btn-cta {
+            background: var(--naranja-suave);
+            color: var(--blanco);
+            padding: 15px 40px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-size: 1.2rem;
+            font-weight: 600;
+            display: inline-block;
+            transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(255,183,77,0.4);
+        }
+
+        .btn-cta:hover {
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(255,183,77,0.6);
+        }
+
+        /* SECCIONES GENERALES */
+        section {
+            padding: 4rem 0;
+        }
+
+        .section-title {
+            text-align: center;
+            font-size: 2.5rem;
+            color: var(--texto-oscuro);
+            margin-bottom: 3rem;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: "🍊";
+            display: block;
+            font-size: 2rem;
+            margin-top: 0.5rem;
+        }
+
+        /* PRODUCTOS */
+        .productos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .producto-card {
+            background: var(--blanco);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--sombra);
+            transition: transform 0.3s, box-shadow 0.3s;
+            position: relative;
+        }
+
+        .producto-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+
+        .producto-img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .producto-info {
+            padding: 1.5rem;
+        }
+
+        .producto-nombre {
+            font-size: 1.3rem;
+            color: var(--texto-oscuro);
+            margin-bottom: 0.5rem;
+        }
+
+        .producto-precio {
+            font-size: 1.5rem;
+            color: var(--naranja);
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .producto-desc {
+            color: var(--texto-claro);
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .btn-agregar {
+            width: 100%;
+            background: var(--verde-claro);
+            color: var(--blanco);
+            border: none;
+            padding: 12px;
+            border-radius: 15px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .btn-agregar:hover {
+            background: var(--verde-primario);
+        }
+
+        .btn-agregar::before {
+            content: "🛒 ";
+        }
+
+        .btn-agregar:active {
+            transform: scale(0.98);
+        }
+
+        /* SOBRE NOSOTROS */
+        .sobre-nosotros {
+            background: linear-gradient(to right, #E8F5E9, #FFF9C4);
+            border-radius: 30px;
+            padding: 3rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 3rem;
+            align-items: center;
+        }
+
+        .sobre-nosotros-texto h3 {
+            font-size: 2rem;
+            color: var(--texto-oscuro);
+            margin-bottom: 1rem;
+        }
+
+        .sobre-nosotros-texto p {
+            color: var(--texto-claro);
+            line-height: 1.8;
+        }
+
+        .sobre-nosotros-img {
+            width: 100%;
+            border-radius: 20px;
+            box-shadow: var(--sombra);
+        }
+
+        /* OFERTAS */
+        .ofertas-banner {
+            background: linear-gradient(135deg, var(--naranja), var(--naranja-suave));
+            color: var(--blanco);
+            padding: 3rem;
+            border-radius: 25px;
+            text-align: center;
+            margin: 2rem 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .ofertas-banner::before {
+            content: "🍓";
+            position: absolute;
+            font-size: 8rem;
+            opacity: 0.1;
+            top: -20px;
+            right: -20px;
+            transform: rotate(-15deg);
+        }
+
+        .ofertas-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .oferta-card {
+            background: rgba(255,255,255,0.2);
+            padding: 1.5rem;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+
+        .oferta-card h4 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .precio-oferta {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--amarillo);
+        }
+
+        /* TESTIMONIOS */
+        .testimonios-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .testimonio-card {
+            background: var(--blanco);
+            padding: 2rem;
+            border-radius: 20px;
+            box-shadow: var(--sombra);
+            position: relative;
+        }
+
+        .testimonio-card::before {
+            content: """;
+            position: absolute;
+            top: 10px;
+            left: 20px;
+            font-size: 4rem;
+            color: var(--verde-claro);
+            opacity: 0.3;
+        }
+
+        .testimonio-texto {
+            font-style: italic;
+            color: var(--texto-claro);
+            margin-bottom: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .testimonio-autor {
+            font-weight: 600;
+            color: var(--texto-oscuro);
+        }
+
+        .estrellas {
+            color: var(--amarillo);
+            margin-bottom: 0.5rem;
+        }
+
+        /* FOOTER */
+        footer {
+            background: var(--texto-oscuro);
+            color: var(--blanco);
+            padding: 3rem 0 1rem;
+            border-radius: 30px 30px 0 0;
+            margin-top: 4rem;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .footer-section h4 {
+            color: var(--amarillo);
+            margin-bottom: 1rem;
+            font-size: 1.3rem;
+        }
+
+        .footer-section p, .footer-section a {
+            color: #E0E0E0;
+            text-decoration: none;
+            line-height: 1.8;
+        }
+
+        .footer-section a:hover {
+            color: var(--amarillo);
+        }
+
+        .redes-sociales {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .redes-sociales a {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background: var(--verde-claro);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s;
+        }
+
+        .redes-sociales a:hover {
+            background: var(--naranja);
+        }
+
+        .footer-bottom {
+            text-align: center;
+            padding-top: 2rem;
+            border-top: 1px solid rgba(255,255,255,0.1);
+            color: #BDBDBD;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+
+            nav {
+                width: 100%;
+                margin-top: 1rem;
+                display: none;
+            }
+
+            nav.active {
+                display: block;
+            }
+
+            nav ul {
+                flex-direction: column;
+                gap: 1rem;
+            }
+
+            .hero-content h1 {
+                font-size: 2.5rem;
+            }
+
+            .hero-content p {
+                font-size: 1.2rem;
+            }
+
+            .sobre-nosotros {
+                grid-template-columns: 1fr;
+                padding: 2rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .productos-grid {
+                grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+                gap: 1.5rem;
+            }
+
+            .cart-sidebar {
+                width: 100%;
+                right: -100%;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+
+            .logo {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <a href="#" class="logo">Nina y Alex</a>
+                <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+                <nav id="navMenu">
+                    <ul>
+                        <li><a href="#inicio">Inicio</a></li>
+                        <li><a href="#productos">Productos</a></li>
+                        <li><a href="#ofertas">Ofertas</a></li>
+                        <li><a href="#nosotros">Sobre Nosotros</a></li>
+                        <li><a href="#contacto">Contacto</a></li>
+                        <li>
+                            <a href="#" class="btn-comprar">Comprar Ahora</a>
+                            <span class="cart-icon" onclick="toggleCart()">
+                                🛒
+                                <span class="cart-count" id="cartCount">0</span>
+                            </span>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <!-- HERO -->
+    <section id="inicio" class="hero">
+        <div class="hero-content">
+            <h1>Frutas frescas para tu día</h1>
+            <p>Calidad natural en cada bocado</p>
+            <a href="#productos" class="btn-cta">Explorar Productos</a>
+        </div>
+    </section>
+
+    <!-- PRODUCTOS -->
+    <section id="productos" class="container">
+        <h2 class="section-title">Nuestros Productos Frescos</h2>
+        <div class="productos-grid">
+            <div class="producto-card">
+                <img src="https://images.unsplash.com/photo-1619546813926-a78fa6372cd2?w=400" alt="Manzanas Rojas" class="producto-img">
+                <div class="producto-info">
+                    <h3 class="producto-nombre">Manzanas Rojas</h3>
+                    <p class="producto-precio">$2.50/kg</p>
+                    <p class="producto-desc">Manzanas frescas, jugosas y dulces de la mejor huerta.</p>
+                    <button class="btn-agregar" onclick="agregarAlCarrito(1, 'Manzanas Rojas', 2.50, 'https://images.unsplash.com/photo-1619546813926-a78fa6372cd2?w=400')">Agregar al carrito</button>
+                </div>
+            </div>
+            <div class="producto-card">
+                <img src="https://images.unsplash.com/photo-1528825871115-3581a5387919?w=400" alt="Plátanos" class="producto-img">
+                <div class="producto-info">
+                    <h3 class="producto-nombre">Plátanos Maduros</h3>
+                    <p class="producto-precio">$1.80/kg</p>
+                    <p class="producto-desc">Plátanos perfectos para tu desayuno o merienda saludable.</p>
+                    <button class="btn-agregar" onclick="agregarAlCarrito(2, 'Plátanos Maduros', 1.80, 'https://images.unsplash.com/photo-1528825871115-3581a5387919?w=400')">Agregar al carrito</button>
+                </div>
+            </div>
+            <div class="producto-card">
+                <img src="https://images.unsplash.com/photo-1619546813926-a78fa6372cd2?w=400" alt="Uvas" class="producto-img">
+                <div class="producto-info">
+                    <h3 class="producto-nombre">Uvas Verdes</h3>
+                    <p class="producto-precio">$3.20/kg</p>
+                    <p class="producto-desc">Uvas sin semillas, ideales para toda la familia.</p>
+                    <button class="btn-agregar" onclick="agregarAlCarrito(3, 'Uvas Verdes', 3.20, 'https://images.unsplash.com/photo-1619546813926-a78fa6372cd2?w=400')">Agregar al carrito</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SOBRE NOSOTROS -->
+    <section id="nosotros" class="container">
+        <h2 class="section-title">Nuestra Historia</h2>
+        <div class="sobre-nosotros">
+            <div class="sobre-nosotros-texto">
+                <h3>Desde 2018: Fruta Fresca con Amor</h3>
+                <p>Somos Nina y Alex, dos hermanos apasionados por la agricultura sustentable. 
+                    Nuestra tienda nació con la misión de llevar frutas de la más alta calidad 
+                    directamente de los productores a tu mesa. Cada fruta es cuidadosamente 
+                    seleccionada para garantizar frescura, sabor y nutrición.</p>
+                <p>Trabajamos directamente con agricultores locales, promoviendo el comercio 
+                    justo y prácticas orgánicas. Tu salud y la del planeta son nuestra prioridad.</p>
+            </div>
+            <img src="https://images.unsplash.com/photo-1556909114-f6e7ad7d3136?w=600" alt="Tienda Nina y Alex" class="sobre-nosotros-img">
+        </div>
+    </section>
+
+    <!-- OFERTAS -->
+    <section id="ofertas" class="container">
+        <h2 class="section-title">Ofertas del Día</h2>
+        <div class="ofertas-banner">
+            <h3>¡Hoy todo con 20% de descuento!</h3>
+            <div class="ofertas-grid">
+                <div class="oferta-card">
+                    <h4>Combo Familiar</h4>
+                    <p class="precio-oferta">$12.99</p>
+                    <p>5kg de frutas variadas</p>
+                </div>
+                <div class="oferta-card">
+                    <h4>Jugo Natural</h4>
+                    <p class="precio-oferta">$3.50</p>
+                    <p>Litro de jugo fresco</p>
+                </div>
+                <div class="oferta-card">
+                    <h4>Fruta Premium</h4>
+                    <p class="precio-oferta">$8.99</p>
+                    <p>Selección especial del chef</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TESTIMONIOS -->
+    <section class="container">
+        <h2 class="section-title">Lo que dicen nuestros clientes</h2>
+        <div class="testimonios-grid">
+            <div class="testimonio-card">
+                <div class="estrellas">⭐⭐⭐⭐⭐</div>
+                <p class="testimonio-texto">"La mejor fruta de la ciudad. Siempre fresca y deliciosa. Mi familia ama sus productos."</p>
+                <p class="testimonio-autor">- María González</p>
+            </div>
+            <div class="testimonio-card">
+                <div class="estrellas">⭐⭐⭐⭐⭐</div>
+                <p class="testimonio-texto">"El servicio es excelente y la calidad insuperable. ¡Los jugos son increíbles!"</p>
+                <p class="testimonio-autor">- Carlos Rodríguez</p>
+            </div>
+            <div class="testimonio-card">
+                <div class="estrellas">⭐⭐⭐⭐⭐</div>
+                <p class="testimonio-texto">"Me encanta apoyar a negocios locales que se preocupan por la calidad y el medio ambiente."</p>
+                <p class="testimonio-autor">- Ana Martínez</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer id="contacto">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h4>Contacto</h4>
+                    <p>📍 Av. Frutal 123, Local 45</p>
+                    <p>📞 +1 234 567 8900</p>
+                    <p>✉️ hola@ninayalex.com</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Horarios</h4>
+                    <p>Lunes a Viernes: 8:00 - 20:00</p>
+                    <p>Sábados: 8:00 - 19:00</p>
+                    <p>Domingos: 9:00 - 18:00</p>
+                </div>
+                <div class="footer-section">
+                    <h4>Síguenos</h4>
+                    <p>Encuéntranos en redes sociales</p>
+                    <div class="redes-sociales">
+                        <a href="#">f</a>
+                        <a href="#">t</a>
+                        <a href="#">i</a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h4>Información</h4>
+                    <p><a href="#">Términos y condiciones</a></p>
+                    <p><a href="#">Política de privacidad</a></p>
+                    <p><a href="#">Envíos y devoluciones</a></p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 Nina y Alex. Todos los derechos reservados. 🍃</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- PANEL CARRITO -->
+    <div class="cart-sidebar" id="cartSidebar">
+        <div class="cart-header">
+            <div class="cart-title">
+                <span>🛒</span>
+                <span>Tu Carrito</span>
+            </div>
+            <button class="close-cart" onclick="toggleCart()">✕</button>
+        </div>
+        <div class="cart-items" id="cartItems">
+            <div class="empty-cart">
+                <p>Tu carrito está vacío</p>
+                <p style="font-size: 0.9rem;">¡Agrega algunas frutas frescas!</p>
+            </div>
+        </div>
+        <div class="cart-footer" id="cartFooter" style="display: none;">
+            <div class="cart-total">
+                <span>Total:</span>
+                <span id="cartTotal">$0.00</span>
+            </div>
+            <button class="btn-checkout" onclick="procederPago()">Proceder al Pago</button>
+        </div>
+    </div>
+
+    <!-- OVERLAY -->
+    <div class="overlay" id="overlay" onclick="toggleCart()"></div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // CARRITO DE COMPRAS
+        let carrito = JSON.parse(localStorage.getItem('carritoNinaAlex')) || [];
+        
+        function guardarCarrito() {
+            localStorage.setItem('carritoNinaAlex', JSON.stringify(carrito));
+        }
+
+        // TOGGLE MENÚ MÓVIL
+        function toggleMenu() {
+            const nav = document.getElementById('navMenu');
+            nav.classList.toggle('active');
+        }
+
+        // TOGGLE CARRITO
+        function toggleCart() {
+            const sidebar = document.getElementById('cartSidebar');
+            const overlay = document.getElementById('overlay');
+            sidebar.classList.toggle('active');
+            overlay.classList.toggle('active');
+        }
+
+        // AGREGAR AL CARRITO
+        function agregarAlCarrito(id, nombre, precio, imagen) {
+            const productoExistente = carrito.find(item => item.id === id);
+            
+            if (productoExistente) {
+                productoExistente.cantidad += 1;
+            } else {
+                carrito.push({
+                    id: id,
+                    nombre: nombre,
+                    precio: precio,
+                    imagen: imagen,
+                    cantidad: 1
+                });
+            }
+            
+            guardarCarrito();
+            actualizarContador();
+            renderizarCarrito();
+            mostrarToast(`${nombre} agregado al carrito`);
+        }
+
+        // REMOVER DEL CARRITO
+        function removerDelCarrito(id) {
+            carrito = carrito.filter(item => item.id !== id);
+            guardarCarrito();
+            actualizarContador();
+            renderizarCarrito();
+            mostrarToast('Producto eliminado');
+        }
+
+        // ACTUALIZAR CANTIDAD
+        function actualizarCantidad(id, cambio) {
+            const producto = carrito.find(item => item.id === id);
+            if (producto) {
+                producto.cantidad += cambio;
+                if (producto.cantidad <= 0) {
+                    removerDelCarrito(id);
+                } else {
+                    guardarCarrito();
+                    actualizarContador();
+                    renderizarCarrito();
+                }
+            }
+        }
+
+        // ACTUALIZAR CONTADOR
+        function actualizarContador() {
+            const count = carrito.reduce((sum, item) => sum + item.cantidad, 0);
+            document.getElementById('cartCount').textContent = count;
+        }
+
+        // RENDERIZAR CARRITO
+        function renderizarCarrito() {
+            const cartItems = document.getElementById('cartItems');
+            const cartFooter = document.getElementById('cartFooter');
+            
+            if (carrito.length === 0) {
+                cartItems.innerHTML = `
+                    <div class="empty-cart">
+                        <p>Tu carrito está vacío</p>
+                        <p style="font-size: 0.9rem;">¡Agrega algunas frutas frescas!</p>
+                    </div>
+                `;
+                cartFooter.style.display = 'none';
+                return;
+            }
+            
+            cartFooter.style.display = 'block';
+            
+            let html = '';
+            let total = 0;
+            
+            carrito.forEach(item => {
+                const subtotal = item.precio * item.cantidad;
+                total += subtotal;
+                
+                html += `
+                    <div class="cart-item">
+                        <img src="${item.imagen}" alt="${item.nombre}" class="cart-item-img">
+                        <div class="cart-item-details">
+                            <div class="cart-item-name">${item.nombre}</div>
+                            <div class="cart-item-price">$${item.precio.toFixed(2)} c/u</div>
+                        </div>
+                        <div class="cart-item-controls">
+                            <button class="quantity-btn" onclick="actualizarCantidad(${item.id}, -1)">-</button>
+                            <span class="cart-item-quantity">${item.cantidad}</span>
+                            <button class="quantity-btn" onclick="actualizarCantidad(${item.id}, 1)">+</button>
+                            <button class="remove-item" onclick="removerDelCarrito(${item.id})">🗑️</button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            cartItems.innerHTML = html;
+            document.getElementById('cartTotal').textContent = `$${total.toFixed(2)}`;
+        }
+
+        // MOSTRAR TOAST
+        function mostrarToast(mensaje) {
+            const toast = document.getElementById('toast');
+            toast.textContent = mensaje;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // PROCEDER AL PAGO
+        function procederPago() {
+            if (carrito.length === 0) {
+                mostrarToast('Tu carrito está vacío');
+                return;
+            }
+            
+            mostrarToast('¡Gracias por tu compra! Pronto procesaremos tu pedido');
+            carrito = [];
+            guardarCarrito();
+            actualizarContador();
+            renderizarCarrito();
+            toggleCart();
+        }
+
+        // SMOOTH SCROLLING
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'start'
+                    });
+                }
+            });
+        });
+
+        // INICIALIZAR
+        document.addEventListener('DOMContentLoaded', () => {
+            actualizarContador();
+            renderizarCarrito();
+        });
+    </script>
+</body>
+</html>
